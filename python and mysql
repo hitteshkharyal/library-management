@@ -1,0 +1,101 @@
+#
+import mysql.connector
+import pandas as pd
+from datetime import date
+config={'user':'root','password':'','host':'localhost','database':'Library_Management'}
+conn=mysql.connector.connect(**config)
+cursor=conn.cursor()
+#
+# # creating new database
+# # cursor.execute('create database Library_Management')
+#
+# # creating table
+# # cursor.execute('create table author(author_id int not null primary key,author_name varchar(50),field varchar(40))')
+# # cursor.execute('create table books(book_id int not null ,book_name varchar(50),author_id int,publication_year int not null, primary key(book_id), foreign key(author_id) references author(author_id))')
+# # cursor.execute('create table reader(id int not null primary key,reader_id int not null, book_id int not null,reader_name varchar(50), issue_date date , return_date date, foreign key (book_id) references books(book_id) )')
+#
+# # inserting values into author
+# # cursor.execute('insert into author(values(#various))')
+# # inserting values into books
+# # cursor.execute('insert into books(values(#various))')
+# # conn.commit()
+#
+# # creating two function that run again and again
+# # in which we get answers like book name and can issue book
+#
+def ab():
+ enter=input("enter go for Information, insertion and updation")
+ if enter=="go":
+  def c():
+    b=("author_name","book_id", "book_name","books_by_field","issue_new_book","return_book")
+    for i in b:
+        print(i)
+    print("Enter done to exit")
+    a=input("Select from above options what you want to do/know")
+    if a==b[0]:
+        cursor.execute("select author_id, author_name from author")
+        r= cursor.fetchall()
+        for k in r:
+            print(k)
+        ab()
+    if a==b[1]:
+        cursor.execute('select book_id,book_name from books')
+        r= cursor.fetchall()
+        for k in r:
+            print(k)
+        ab()
+    if a==b[2]:
+        cursor.execute("select book_name,author_name from books inner join author on books.author_id=author.author_id")
+        r = cursor.fetchall()
+        for k in r:
+            print(k)
+        ab()
+    if a==b[3]:
+        cursor.execute("select book_name,author_name,field from books inner join author on books.author_id=author.author_id order by field")
+        r = cursor.fetchall()
+        for k in r:
+            print(k)
+        ab()
+
+# ### Insert Dynamically into reader table
+    if a==b[4]:
+        cursor.execute('select Max(id) from reader')
+        last=cursor.fetchall()
+        for z in last:
+            print("last id was",z)
+        j=input("enter id")
+        k=input("enter reader id")
+        l=input("enter book id")
+        m=input("enter reader name")
+        n=date.today()
+        o='0000-00-00'
+# ### Insert query Dynamically
+        insert_smt=("insert into reader(values(%s,%s,%s,%s,%s,%s))")
+        data=(j,k,l,m,n,o)
+        cursor.execute(insert_smt,data)
+        cursor.execute(f"select * from reader where id={j}")
+        r= cursor.fetchall()
+        for z in r:
+            print(z)
+        ab()
+## # Updating Return Date Dynamically
+    if a==b[5]:
+        p=input("enter id to return")
+        Q=date.today()
+        cursor.execute(f"update reader set return_date='{Q}' where id={p}")
+        conn.commit()
+        cursor.execute(f"select * from reader where id={p}")
+        r = cursor.fetchall()
+        for z in r:
+            print(z)
+        ab()
+    if a=="done":
+        print('Bye BYe')
+        ab()
+    else:
+        print("please enter accurately")
+        c()
+  c()
+ else:
+    print("bye")
+ab()
